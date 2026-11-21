@@ -277,7 +277,8 @@
 .style-vortex{position:absolute;inset:0;z-index:1;isolation:isolate;overflow:hidden;background:#070304;color:#f1c4ba;min-height:0;transform:translateY(0)}
 .style-vortex[hidden]{display:none!important}
 .vortex-canvas{position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none}
-.vortex-shade{position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,#070304b3 0%,#07030418 24%,transparent 52%,#0703042b 83%,#070304e6 100%)}
+.vortex-shade{position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,#07030455 0%,#0703040d 17%,transparent 52%,#07030418 88%,#07030488 100%)}
+.style-vortex:has(.vortex-quote:not([hidden])) .vortex-shade{background:linear-gradient(180deg,#070304d9 0%,#070304b3 35%,#07030433 57%,transparent 75%,#07030488 100%)}
 .vortex-heading{position:absolute;z-index:3;left:7%;right:7%;top:19px;display:flex;align-items:baseline;justify-content:space-between;gap:12px;pointer-events:none}
 .vortex-heading>.gothic{font-size:24px;color:#af555e;line-height:1.1}
 .vortex-heading h2{font-family:var(--font-display);font-size:14px;font-weight:400;line-height:1.5;letter-spacing:.14em;margin:0;color:#c79089;outline:none}
@@ -1073,7 +1074,7 @@
   }));
   const letters = [];
   const TAU = Math.PI * 2;
-  const TURNS = TAU * 4.8;
+  const TURNS = TAU * 8.8;
   let width = 0, height = 0, phase = 0, lastFrame = 0, frame = 0;
   let sceneActive = false, running = false, paused = false, complete = false;
   let busy = false, exiting = false, epoch = 0, holdTimer = 0;
@@ -1120,7 +1121,7 @@
       context.font = `100px ${item.latin ? 'ReverieGothic, Georgia, serif' : 'ReverieSong, "Songti SC", serif'}`;
       const advance = Math.max(.24, context.measureText(item.char).width / 100);
       letters.push({...item, offset:angle});
-      angle += advance * (item.latin ? .155 : .185) + .015;
+      angle += advance * (item.latin ? .19 : .235) + .008;
     }
   }
   function pointAt(t) {
@@ -1129,8 +1130,8 @@
     const growth = Math.log(maximum / minimum) / TURNS;
     const radius = minimum * Math.exp(growth * t);
     const angle = t - 1.35;
-    return {x:width * .53 + Math.cos(angle) * radius,
-      y:height * .64 + Math.sin(angle) * radius * .94,
+    return {x:width * .52 + Math.cos(angle) * radius,
+      y:height * .54 + Math.sin(angle) * radius * .94,
       radius, angle:angle + Math.atan2(1, growth)};
   }
   function draw() {
@@ -1141,14 +1142,14 @@
     for (const item of letters) {
       const t = mod(item.offset - phase, TURNS);
       const point = pointAt(t);
-      const size = Math.max(5, Math.min(72, point.radius * (item.latin ? .145 : .175)));
+      const size = Math.max(6, Math.min(110, point.radius * (item.latin ? .195 : .245)));
       if (point.x < -size || point.x > width + size || point.y < -size || point.y > height + size) continue;
       const edgeFade = Math.min(1, t / .6, (TURNS - t) / .7);
       context.save();
       context.translate(point.x, point.y);
       context.rotate(point.angle);
       context.font = `${size}px ${item.latin ? 'ReverieGothic, Georgia, serif' : 'ReverieSong, "Songti SC", serif'}`;
-      context.fillStyle = item.latin ? `rgba(165,57,75,${(.3 + t / TURNS * .46) * edgeFade})` : `rgba(167,32,52,${(.4 + t / TURNS * .47) * edgeFade})`;
+      context.fillStyle = item.latin ? `rgba(165,57,75,${(.42 + t / TURNS * .48) * edgeFade})` : `rgba(167,32,52,${(.52 + t / TURNS * .43) * edgeFade})`;
       context.textBaseline = 'middle';
       context.fillText(item.char, 0, 0);
       context.restore();
@@ -1160,7 +1161,7 @@
     if (!lastFrame) lastFrame = timestamp;
     const elapsed = Math.min(timestamp - lastFrame, 80);
     if (elapsed >= 32) {
-      phase = mod(phase + elapsed * .00022, TURNS);
+      phase = mod(phase + elapsed * .00048, TURNS);
       lastFrame = timestamp;
       draw();
     }
@@ -1242,7 +1243,7 @@
             {opacity:0, transform:`translate(${dx}px,${dy}px) rotate(${angle * 30}deg) scale(.28)`,filter:'blur(2px)'},
             {offset:.18,opacity:.9,transform:`translate(${dx * .88 - 25}px,${dy * .89 + 24}px) rotate(${-35 + letterIndex % 4 * 18}deg) scale(.7)`,filter:'blur(.6px)'},
             {opacity:1,transform:`translate(0,0) rotate(${collage}) scale(1)`,filter:'blur(0)'}
-          ], {duration:1050 + letterIndex % 4 * 55,delay:(english ? 260 + letterIndex * 15 : letterIndex * 42),easing:'cubic-bezier(.16,.62,.2,1)',fill:'both'}));
+          ], {duration:1800 + letterIndex % 4 * 75,delay:(english ? 500 + letterIndex * 30 : letterIndex * 90),easing:'cubic-bezier(.16,.62,.2,1)',fill:'both'}));
         });
       });
       await Promise.all(tasks);
@@ -1259,7 +1260,7 @@
     clearTimeout(holdTimer);
     if (!visible() || busy || exiting || !done.every(Boolean)) return;
     // Leave both completed sentences readable before the whole scene rises.
-    holdTimer = setTimeout(exitGate, 3600);
+    holdTimer = setTimeout(exitGate, 4800);
   }
   async function exitGate() {
     if (!visible() || busy || exiting || !done.every(Boolean)) return;
