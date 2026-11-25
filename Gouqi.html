@@ -1161,7 +1161,7 @@
     if (!lastFrame) lastFrame = timestamp;
     const elapsed = Math.min(timestamp - lastFrame, 80);
     if (elapsed >= 32) {
-      phase = mod(phase + elapsed * .00048, TURNS);
+      phase = mod(phase + elapsed * .00016, TURNS);
       lastFrame = timestamp;
       draw();
     }
